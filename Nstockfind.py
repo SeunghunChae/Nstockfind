@@ -45,15 +45,14 @@ options = webdriver.ChromeOptions()
 service = Service('c:\chromedriver.exe')
 driver = webdriver.Chrome(service=service, options=options)
 
+url='https://m.stock.naver.com/search'
 
 for i in range(1033,1035):
     print(i)
     content=''
+    name=''
     flag=0
     try:
-        url='https://m.stock.naver.com/search'
-        #url="https://m.stock.naver.com/worldstock/stock/"+company[i]+"/overview/"
-        print(url)
         driver.get(url)
 
         inputbox=driver.find_element(By.CSS_SELECTOR, '#__next > div.ViewportFrame_article__KgZKu > div.SearchBar_article__XF6AA > div > div > div > input.SearchBar_input__t2ws8')
@@ -98,28 +97,35 @@ for i in range(1033,1035):
                 error.append(i,content)
             
     except Exception:
-        error.append((i,content))
+        error.append((i,content,name))  #etf는 에러가 난다 => 기업 개요가 없다.
 
 
 with open('정상.csv','a',newline='') as f:
     f.write('코드,기업명,내용,')
+    f.write('\r\n')
     for i in search :
         line=i[0]+','+i[1]+','+i[2]
         f.write(line)
-        f.write('\n')
+        f.write('\r\n')
 
 
 with open('누락목록.csv','a',newline='') as f:
-    f.write('i,내용,\n')
+    f.write('i,내용,')
+    f.write('\r\n')
     for i in output :
         line=str(i[0])+','+i[1]
         f.write(line)
-        f.write('\n')
+        f.write('\r\n')
 
 
 with open('에러.csv','a',newline='') as f:
-    f.write('i,내용,\n')
+    f.write('etf,i,내용,이름,')
+    f.write('\r\n')
     for i in error :
-        line=str(i[0])+','+i[1]
+        line=str(i[0])+','+i[1]+','+i[2]
+        if 'etf' in i[2].lower():
+            line+='etf,'+line
+        else:
+            line=','+line
         f.write(line)
-        f.write('\n')
+        f.write('\r\n')
