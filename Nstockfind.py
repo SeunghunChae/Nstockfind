@@ -70,14 +70,25 @@ for i in range(10):
         #inputbox.send_keys(Keys.ENTER)
         time.sleep(0.5)
 
-        target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > strong > em')
-        code=target.text
-        target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9')     
-        name=target.text
-        print((code,name))
-        target.click()
+        #################################회사명 검색###################################
+        #가끔씩 child가 없는 경우가 있음
+        if is_element_present(driver, By.CSS_SELECTOR, '#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > strong > em'):
+            target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > strong > em')
+            code=target.text
+            target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9')     
+            name=target.text
+            print((code,name))
+            target.click()
+        else:
+            target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li > div.SearchList_link__zBlL1 > strong')
+            code=target.text
+            target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9')     
+            name=target.text
+            print((code,name))
+            target.click()
+            
 
-        #기업 페이지 들어옴. 
+        ###########################기업 페이지 들어옴################################### 
         time.sleep(0.5)
         if is_element_present(driver, By.CSS_SELECTOR, '#_main_stock_tab > div > ul > li:nth-child(6) > a > span'):
             overview=driver.find_element(By.CSS_SELECTOR,"#_main_stock_tab > div > ul > li:nth-child(6) > a > span")
