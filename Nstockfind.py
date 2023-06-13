@@ -77,7 +77,8 @@ for i in range(500):
 
         try:
             #기업개요 뜰때까지 기다림
-            time.sleep(0.5)\            comp=driver.find_element(By.CSS_SELECTOR,"#content > div.OverviewContainer_overviewContainer__2Gzn5 > div.OverviewContainer_infoCorp__3K5qX")
+            time.sleep(0.5)
+            comp=driver.find_element(By.CSS_SELECTOR,"#content > div.OverviewContainer_overviewContainer__2Gzn5 > div.OverviewContainer_infoCorp__3K5qX")
             content=comp.text.replace('\n','').replace(',','')
             print(content)
             #__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1)
