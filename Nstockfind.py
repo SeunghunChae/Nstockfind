@@ -129,6 +129,6 @@ with open('에러.csv','a',newline='') as f:
         if 'etf' in i[2].lower():
             line=str(i[0])+',etf,'+i[3]+','+i[2]+','+i[1]
         else:
-            line=','+line
+            line=str(i[0])+',,'+i[3]+','+i[2]+','+i[1]
         f.write(line)
         f.write('\r\n')
