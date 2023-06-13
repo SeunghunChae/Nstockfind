@@ -92,12 +92,12 @@ for i in range(1033,1035):
                 output.append((i, code, name))
             flag=1
             
-        finally:
+        finally:    #일반오류로 실행이 안됨
             if flag !=1:
-                error.append(i,content)
+                error.append(i,content,name)
             
-    except Exception:
-        error.append((i,content,name))  #etf는 에러가 난다 => 기업 개요가 없다.
+    except Exception:   #etf는 에러가 난다 
+        error.append((i,content,name))  
 
 
 with open('정상.csv','a',newline='') as f:
