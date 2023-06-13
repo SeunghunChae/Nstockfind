@@ -47,7 +47,7 @@ driver = webdriver.Chrome(service=service, options=options)
 
 url='https://m.stock.naver.com/search'
 
-for i in range(1033,1035):
+for i in range(1032,1034):
     print(i)
     content=''
     name=''
@@ -83,7 +83,7 @@ for i in range(1033,1035):
             #__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1)
             #__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > strong > em
             flag=1
-            search.append((code,name,content))
+            search.append((i,code,name,content))
             
         except Exception:
             comp=driver.find_element(By.CSS_SELECTOR,"#content > div.OverviewContainer_overviewContainer__2Gzn5 > div.NewError_article__2j3to > strong")
@@ -94,18 +94,18 @@ for i in range(1033,1035):
             
         finally:    #일반오류로 실행이 안됨
             if flag !=1:
-                error.append(i,content,name)
+                error.append(i,content,name,code)
             
     except Exception:   #etf는 에러가 난다 
-        error.append((i,content,name))  
+        error.append((i,content,name,code))  
 
 
 with open('정상.csv','a',newline='') as f:
-    f.write('코드,기업명,내용,')
+    f.write('i,코드,기업명,내용,')
     f.write('\r\n')
     for i in search :
         line=''
-        line=i[0]+','+i[1]+','+i[2]
+        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]
         f.write(line)
         f.write('\r\n')
 
@@ -121,13 +121,12 @@ with open('누락목록.csv','a',newline='') as f:
 
 
 with open('에러.csv','a',newline='') as f:
-    f.write('etf,i,이름,내용,')
+    f.write('i,etf,코드,이름,내용,')
     f.write('\r\n')
     for i in error :
         line=''
-        line=str(i[0])+','+i[1]+','+i[2]
         if 'etf' in i[2].lower():
-            line='etf,'+line
+            line=str(i[0])+',etf,'+i[3]+','+i[2]+','+i[1]
         else:
             line=','+line
         f.write(line)
