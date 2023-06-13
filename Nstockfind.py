@@ -49,12 +49,14 @@ del company[0]
 options = webdriver.ChromeOptions()
 ##options.add_argument('--headless')
 ##options.add_argument('--disable-gpu')
+#크롤링 차단 방지 user-agent 추가 
+options.add_argument("user-agent=Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
 service = Service('c:\chromedriver.exe')
 driver = webdriver.Chrome(service=service, options=options)
 
 url='https://m.stock.naver.com/search'
 
-for i in range(18,19):
+for i in range(len(company)):
     print(i)
     content=''
     name=''
