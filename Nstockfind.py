@@ -47,13 +47,14 @@ driver = webdriver.Chrome(service=service, options=options)
 
 url='https://m.stock.naver.com/search'
 
-for i in range(1032,1034):
+for i in range(500):
     print(i)
     content=''
     name=''
     flag=0
     try:
         driver.get(url)
+        time.sleep(0.5)
 
         inputbox=driver.find_element(By.CSS_SELECTOR, '#__next > div.ViewportFrame_article__KgZKu > div.SearchBar_article__XF6AA > div > div > div > input.SearchBar_input__t2ws8')
         inputbox.send_keys(company[i])                      #글자입력
@@ -62,21 +63,21 @@ for i in range(1032,1034):
         #inputbox.send_keys(Keys.ENTER)
         time.sleep(0.5)
 
-        target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > strong > em')
+        time.sleep(0.5)
         code=target.text
-        target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9')     
+        time.sleep(0.5)
         name=target.text
         print((code,name))
         target.click()
 
         #기업 페이지 들어옴. 기업개요 버튼 뜰때까지 기다림
-        WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#_main_stock_tab > div > ul > li:nth-child(6) > a > span')))    
+        time.sleep(0.5)
         overview=driver.find_element(By.CSS_SELECTOR,"#_main_stock_tab > div > ul > li:nth-child(6) > a > span")
         overview.click()
 
         try:
             #기업개요 뜰때까지 기다림
-            WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#content > div.OverviewContainer_overviewContainer__2Gzn5 > div.OverviewContainer_infoCorp__3K5qX')))    
+            time.sleep(0.5)
             comp=driver.find_element(By.CSS_SELECTOR,"#content > div.OverviewContainer_overviewContainer__2Gzn5 > div.OverviewContainer_infoCorp__3K5qX")
             content=comp.text.replace('\n','').replace(',','')
             print(content)
