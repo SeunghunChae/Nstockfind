@@ -104,27 +104,30 @@ with open('정상.csv','a',newline='') as f:
     f.write('코드,기업명,내용,')
     f.write('\r\n')
     for i in search :
+        line=''
         line=i[0]+','+i[1]+','+i[2]
         f.write(line)
         f.write('\r\n')
 
 
 with open('누락목록.csv','a',newline='') as f:
-    f.write('i,내용,')
+    f.write('i,코드,이름,')
     f.write('\r\n')
     for i in output :
-        line=str(i[0])+','+i[1]
+        line=''
+        line=str(i[0])+','+i[1]+','+i[2]
         f.write(line)
         f.write('\r\n')
 
 
 with open('에러.csv','a',newline='') as f:
-    f.write('etf,i,내용,이름,')
+    f.write('etf,i,이름,내용,')
     f.write('\r\n')
     for i in error :
+        line=''
         line=str(i[0])+','+i[1]+','+i[2]
         if 'etf' in i[2].lower():
-            line+='etf,'+line
+            line='etf,'+line
         else:
             line=','+line
         f.write(line)
