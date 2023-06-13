@@ -16,6 +16,13 @@ import time
 import csv
 import chromedriver_autoinstaller
 
+def is_element_present(driver, by, value):
+    try:
+        driver.find_element(by=by, value=value)
+        return True
+    except Exception:
+        return False
+
 
 company=[]
 search=[]
@@ -47,8 +54,7 @@ driver = webdriver.Chrome(service=service, options=options)
 
 url='https://m.stock.naver.com/search'
 
-for i in range(500):
-    print(i)
+for i in range(10):
     content=''
     name=''
     flag=0
@@ -70,14 +76,20 @@ for i in range(500):
         print((code,name))
         target.click()
 
-        #기업 페이지 들어옴. 기업개요 버튼 뜰때까지 기다림
+        #기업 페이지 들어옴. 
         time.sleep(0.5)
-        overview=driver.find_element(By.CSS_SELECTOR,"#_main_stock_tab > div > ul > li:nth-child(6) > a > span")
-        overview.click()
+        if is_element_present(driver, By.CSS_SELECTOR, '#_main_stock_tab > div > ul > li:nth-child(6) > a > span'):
+            overview=driver.find_element(By.CSS_SELECTOR,"#_main_stock_tab > div > ul > li:nth-child(6) > a > span")
+            overview.click()
+        else :
+            overview=driver.find_element(By.CSS_SELECTOR,"#_main_stock_tab > div > ul > li:nth-child(5) > a > span")
+            overview.click()
 
         try:
             #기업개요 뜰때까지 기다림
-            time.sleep(0.5)
+            while True:
+                if is_element_present(driver, By.CSS_SELECTOR, '#_main_stock_tab > div > ul > li:nth-child(6) > a > span') or is_element_present(driver, By.CSS_SELECTOR, '#_main_stock_tab > div > ul > li:nth-child(5) > a > span'):
+                    break
             comp=driver.find_element(By.CSS_SELECTOR,"#content > div.OverviewContainer_overviewContainer__2Gzn5 > div.OverviewContainer_infoCorp__3K5qX")
             content=comp.text.replace('\n','').replace(',','')
             print(content)
@@ -97,7 +109,7 @@ for i in range(500):
             if flag !=1:
                 error.append(i,content,name,code)
             
-    except Exception:   #etf는 에러가 난다 
+    except Exception:   #etf는 에러가 난다
         error.append((i,content,name,code))  
 
 
