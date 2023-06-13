@@ -55,6 +55,7 @@ driver = webdriver.Chrome(service=service, options=options)
 url='https://m.stock.naver.com/search'
 
 for i in range(10):
+    print(i)
     content=''
     name=''
     flag=0
@@ -86,9 +87,9 @@ for i in range(10):
             overview.click()
 
         try:
-            #기업개요 뜰때까지 기다림
+            #기업개요 내용 뜰때까지 기다림
             while True:
-                if is_element_present(driver, By.CSS_SELECTOR, '#_main_stock_tab > div > ul > li:nth-child(6) > a > span') or is_element_present(driver, By.CSS_SELECTOR, '#_main_stock_tab > div > ul > li:nth-child(5) > a > span'):
+                if is_element_present(driver, By.CSS_SELECTOR, '#content > div.OverviewContainer_overviewContainer__2Gzn5 > div.OverviewContainer_infoCorp__3K5qX'):
                     break
             comp=driver.find_element(By.CSS_SELECTOR,"#content > div.OverviewContainer_overviewContainer__2Gzn5 > div.OverviewContainer_infoCorp__3K5qX")
             content=comp.text.replace('\n','').replace(',','')
