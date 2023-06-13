@@ -29,6 +29,7 @@ search=[]
 text=[]
 error=[]
 output=[]
+korea=[]
 
 ####################################검색 리스트 입력#######################################
 
@@ -52,11 +53,11 @@ options = webdriver.ChromeOptions()
 #크롤링 차단 방지 user-agent 추가 
 options.add_argument("user-agent=Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36")
 service = Service('c:\chromedriver.exe')
-driver = webdriver.Chrome(service=service, options=options)
+driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
 
-for i in range(len(company)):
+for i in range(8717,8720):
     print(i)
     content=''
     name=''
@@ -75,12 +76,34 @@ for i in range(len(company)):
         #################################회사명 검색###################################
         #가끔씩 child가 없는 경우가 있음
         if is_element_present(driver, By.CSS_SELECTOR, '#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > strong > em'):
-            target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > strong > em')
-            code=target.text
-            target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9')     
-            name=target.text
-            print((code,name))
-            target.click()
+            k=1
+            while True:
+                target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9')     
+                name=target.text
+                if name.isdigit() == False:    #미국종목 발견
+                    target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > strong > em')
+                    code=target.text           
+                    print((code,name))
+                    target.click()
+                    break
+                else : #code가 숫자면 한국 종목이다. 한국종목과 겹치면 무한루프에 빠진다.
+                    print(company[i]+' 한국')
+                    k+=1
+        elif is_element_present(driver, By.CSS_SELECTOR, '#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child(1) > div.SearchList_link__zBlL1 > strong'):
+            k=1
+            while True:
+                target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9')     
+                name=target.text
+                if name.isdigit()!=True:    #미국종목 발견
+                    target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > strong')
+                    code=target.text           
+                    print((code,name))
+                    target.click()
+                    break
+                else : #code가 숫자면 한국 종목이다. 한국종목과 겹치면 무한루프에 빠진다.
+                    print(company[i]+' 한국')
+                    korea.append((i,company[i]))
+                    k+=1
         else:
             target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li > div.SearchList_link__zBlL1 > strong')
             code=target.text
@@ -158,5 +181,15 @@ with open('에러.csv','a',newline='') as f:
             line=str(i[0])+',etf,'+i[3]+','+i[2]+','+i[1]
         else:
             line=str(i[0])+',,'+i[3]+','+i[2]+','+i[1]
+        f.write(line)
+        f.write('\r\n')
+
+
+with open('한국.csv','a',newline='') as f:
+    f.write('i,이름,')
+    f.write('\r\n')
+    for i in korea :
+        line=''
+        line=str(i[0])+','+i[1]
         f.write(line)
         f.write('\r\n')
