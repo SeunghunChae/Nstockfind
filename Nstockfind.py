@@ -65,7 +65,7 @@ driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
 
-for i in range(4000,6000):
+for i in range(9000,len(company)):
     print(i)
     content=''
     name=''
@@ -79,7 +79,7 @@ for i in range(4000,6000):
         #inputbox.send_keys(Keys.CONTROL, 'a')              #글자지우기
         #inputbox.send_keys(Keys.DELETE)
         #inputbox.send_keys(Keys.ENTER)
-        time.sleep(0.5)
+        time.sleep(0.7)
 
         #################################회사명 검색###################################
         #가끔씩 child가 없는 경우가 있음
