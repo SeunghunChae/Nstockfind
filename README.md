@@ -13,7 +13,7 @@ finding m194 stocks in naver having no information on overview
 Python
 
 [추가 설치 라이브러리]
-[ lxml, requests, selenium, besutifulsoup]
+[ requests, selenium, besutifulsoup]
 
 * c:\에 크롬에 맞는 크롬드라이버를 넣어야한다.
 크롬 버전 확인 : 크롬 도구 > 도움말 > chrome 정보
