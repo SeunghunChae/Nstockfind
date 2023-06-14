@@ -23,6 +23,14 @@ def is_element_present(driver, by, value):
     except Exception:
         return False
 
+def check_text(driver, target):
+    try:
+        target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9')     
+        name=target.text
+        return True
+    except Exception:
+        return False                
+
 
 company=[]
 search=[]
@@ -57,7 +65,7 @@ driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
 
-for i in range(8717,8720):
+for i in range(4000,6000):
     print(i)
     content=''
     name=''
@@ -96,10 +104,11 @@ for i in range(8717,8720):
                 name=target.text
                 if name.isdigit()!=True:    #미국종목 발견
                     target=driver.find_element(By.CSS_SELECTOR,'#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > strong')
-                    code=target.text           
-                    print((code,name))
-                    target.click()
-                    break
+                    if check_text(driver,target):   #로딩이 늦어 em이 안읽혔을때 여기가 읽히는 경우가 있다. 이 경우 text를 가져올 수 없어 exception을 뿜는다. 확인 후 진행하는 코드 추가
+                        code=target.text           
+                        print((code,name))
+                        target.click()
+                        break
                 else : #code가 숫자면 한국 종목이다. 한국종목과 겹치면 무한루프에 빠진다.
                     print(company[i]+' 한국')
                     korea.append((i,company[i]))
