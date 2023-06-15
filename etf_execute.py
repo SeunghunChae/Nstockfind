@@ -36,7 +36,9 @@ class FindKoreaException(Exception): ## Exception을 상속받아야한다.
     def __init__(self):
         super().__init__('한국종목이 나왔습니다.') 
 
-    
+class TimeoutException(Exception): ## while이 3초 이상 돌 경우
+    def __init__(self,timeout):
+        super().__init__(f"while이 {timeout} 초 이상 돌았습니다.")     
 
 company=[]
 etf=[]
@@ -86,7 +88,7 @@ check_etf='#content > div.Overview_article__3sC9o.Overview_articleIndex__2m4YI >
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(156,157):
+for i in range(0,len(etf)):
     print(i)    
     idx=etf[i]
     name=''
@@ -99,16 +101,23 @@ for i in range(156,157):
         time.sleep(0.5)
         inputbox=driver.find_element(By.CSS_SELECTOR, '#__next > div.ViewportFrame_article__KgZKu > div.SearchBar_article__XF6AA > div > div > div > input.SearchBar_input__t2ws8')
         inputbox.send_keys(company[idx])
-        time.sleep(0.8)
+        time.sleep(0.5)
         #이름을 찾는다
+        time.sleep(0.5)
         if is_element_present(driver, By.CSS_SELECTOR,elem_name1):
             target=driver.find_element(By.CSS_SELECTOR, elem_name1)
             name=target.text
+            start_time = time.time() # 3초 이상 걸리면 탈출
             while True: #한국종목일경우 코드번호를 통해 미국 종목을 찾는다.
-                if k>1 :
-                    print(k)
+                elapsed_time = time.time() - start_time
+                if elapsed_time>3:
+                    raise TimeoutException('3')
                 target=driver.find_element(By.CSS_SELECTOR, elem_code1)
+                start_time2 = time.time() # 3초 이상 걸리면 탈출
                 while True: #로딩이 늦어 em이 안읽혔을때 여기가 읽히는 경우가 있다. 이 경우 text를 가져올 수 없어 exception을 뿜는다. 확인 후 진행하는 코드 추가
+                    elapsed_time2 = time.time() - start_time2
+                    if elapsed_time2>3:
+                        raise TimeoutException('3')
                     if check_text(driver,target):
                         code=target.text
                         target=driver.find_element(By.CSS_SELECTOR, elem_market1)
@@ -130,8 +139,12 @@ for i in range(156,157):
             market=target.text
             target.click()                       
 
-        ###########################기업 페이지 들어옴################################### 
+        ###########################기업 페이지 들어옴###################################
+        start_time = time.time()
         while True:
+            elapsed_time = time.time() - start_time
+            if elapsed_time>3:
+                raise TimeoutException('3')
             if is_element_present(driver, By.CSS_SELECTOR,check_etf): #기업 개요가 나올때까지 기다린다
                 if is_element_present(driver, By.CSS_SELECTOR,elem_overview1):
                     overview=driver.find_element(By.CSS_SELECTOR,elem_overview1).text
@@ -147,13 +160,19 @@ for i in range(156,157):
         korea.append((idx, code, name,market))
         print("korea : "+str(idx)+' '+code+' '+name)
         print(e)
+
+    except TimeoutException as e:
+        code=traceback.format_exc()
+        no=re.search(r'line (\d+)',code)
+        error.append((i))
+        print(str(i)+'에서 오류발생 , '+no.group()+' :')
+        print(str(e))
         
     except Exception as e:   #에러목록 수집
         code=traceback.format_exc()
         no=re.search(r'line (\d+)',code)
         error.append((i))
-        print(no.group()+' :')
-        print(e)
+        print(no.group()+' 에서 에러발생함. 일반 에러출력')
 
 
 with open('etf.csv','a',newline='') as f:
@@ -162,5 +181,14 @@ with open('etf.csv','a',newline='') as f:
     for i in output :
         line=''
         line=str(i[0])+','+i[1]+','+i[2]+','+i[3]+','+i[4]
+        f.write(line)
+        f.write('\r\n')
+
+with open('etf_missing.csv','a',newline='') as f:
+    f.write('i,코드,상품명,거래소,')
+    f.write('\r\n')
+    for i in no_exist :
+        line=''
+        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]
         f.write(line)
         f.write('\r\n')
