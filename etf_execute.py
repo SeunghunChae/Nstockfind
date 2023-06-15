@@ -43,6 +43,7 @@ etf=[]
 error=[]
 output=[]
 korea=[]
+no_exist=[]
 
 file=open('input.dat', 'r')
 idx_etf=open('etf.dat', 'r')
@@ -79,11 +80,13 @@ elem_market2='#__next > div.ViewportFrame_article__KgZKu > div.SearchList_articl
 
 elem_overview1='#content > div.Overview_article__3sC9o.Overview_articleIndex__2m4YI > div'
 
+check_etf='#content > div.Overview_article__3sC9o.Overview_articleIndex__2m4YI > strong'
+
 ##################### 크롤링 시작 #####################
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(0,len(etf)):
+for i in range(156,157):
     print(i)    
     idx=etf[i]
     name=''
@@ -96,7 +99,7 @@ for i in range(0,len(etf)):
         time.sleep(0.5)
         inputbox=driver.find_element(By.CSS_SELECTOR, '#__next > div.ViewportFrame_article__KgZKu > div.SearchBar_article__XF6AA > div > div > div > input.SearchBar_input__t2ws8')
         inputbox.send_keys(company[idx])
-        time.sleep(1)
+        time.sleep(0.8)
         #이름을 찾는다
         if is_element_present(driver, By.CSS_SELECTOR,elem_name1):
             target=driver.find_element(By.CSS_SELECTOR, elem_name1)
@@ -129,10 +132,14 @@ for i in range(0,len(etf)):
 
         ###########################기업 페이지 들어옴################################### 
         while True:
-            if is_element_present(driver, By.CSS_SELECTOR,elem_overview1): #기업 개요가 나올때까지 기다린다
-                overview=driver.find_element(By.CSS_SELECTOR,elem_overview1).text
-                output.append((idx, code, name, market, overview))
-                break
+            if is_element_present(driver, By.CSS_SELECTOR,check_etf): #기업 개요가 나올때까지 기다린다
+                if is_element_present(driver, By.CSS_SELECTOR,elem_overview1):
+                    overview=driver.find_element(By.CSS_SELECTOR,elem_overview1).text
+                    output.append((idx, code, name, market, overview))
+                    break
+                else :
+                    no_exist.append((idx, code, name, market))
+                    break
 
         
 
@@ -147,3 +154,13 @@ for i in range(0,len(etf)):
         error.append((i))
         print(no.group()+' :')
         print(e)
+
+
+with open('etf.csv','a',newline='') as f:
+    f.write('i,코드,상품명,거래소,개요,')
+    f.write('\r\n')
+    for i in output :
+        line=''
+        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]+','+i[4]
+        f.write(line)
+        f.write('\r\n')
