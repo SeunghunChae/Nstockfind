@@ -92,7 +92,7 @@ check_etf='#content > div.Overview_article__3sC9o.Overview_articleIndex__2m4YI >
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(1993,1994):
+for i in range(2145,2146):
     print(i)    
     idx=etf[i]
     name=''
@@ -141,8 +141,9 @@ for i in range(1993,1994):
             name=target.text
             target=driver.find_element(By.CSS_SELECTOR,elem_market2)
             market=target.text
-            target.click()                       
+            target.click()
 
+        print(code+' '+name+' '+market)
         ###########################기업 페이지 들어옴###################################
         start_time = time.time()
         while True:
