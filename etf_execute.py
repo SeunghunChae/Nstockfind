@@ -164,14 +164,14 @@ for i in range(0,len(etf)):
     except TimeoutException as e:
         code=traceback.format_exc()
         no=re.search(r'line (\d+)',code)
-        error.append((i))
+        error.append((i,code, name, market,'Timeout'))
         print(str(i)+'에서 오류발생 , '+no.group()+' :')
         print(str(e))
         
     except Exception as e:   #에러목록 수집
         code=traceback.format_exc()
         no=re.search(r'line (\d+)',code)
-        error.append((i))
+        error.append((i,code, name, market,'unknown error'))
         print(no.group()+' 에서 에러발생함. 일반 에러출력')
 
 
@@ -190,5 +190,14 @@ with open('etf_missing.csv','a',newline='') as f:
     for i in no_exist :
         line=''
         line=str(i[0])+','+i[1]+','+i[2]+','+i[3]
+        f.write(line)
+        f.write('\r\n')
+
+with open('error.csv','a',newline='') as f:
+    f.write('i,코드,상품명,거래소,error')
+    f.write('\r\n')
+    for i in no_exist :
+        line=''
+        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]+','+i[4]
         f.write(line)
         f.write('\r\n')
