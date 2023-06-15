@@ -38,7 +38,11 @@ class FindKoreaException(Exception): ## Exception을 상속받아야한다.
 
 class TimeoutException(Exception): ## while이 3초 이상 돌 경우
     def __init__(self,timeout):
-        super().__init__(f"while이 {timeout} 초 이상 돌았습니다.")     
+        super().__init__(f"while이 {timeout} 초 이상 돌았습니다.")
+
+class NotEtfException(Exception): ## while이 3초 이상 돌 경우
+    def __init__(self,name):
+        super().__init__(f"{name}는 etf가 아닙니다.")
 
 company=[]
 etf=[]
@@ -88,7 +92,7 @@ check_etf='#content > div.Overview_article__3sC9o.Overview_articleIndex__2m4YI >
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(0,len(etf)):
+for i in range(1993,1994):
     print(i)    
     idx=etf[i]
     name=''
@@ -144,7 +148,7 @@ for i in range(0,len(etf)):
         while True:
             elapsed_time = time.time() - start_time
             if elapsed_time>3:
-                raise TimeoutException('3')
+                raise NotEtfException(company[idx])
             if is_element_present(driver, By.CSS_SELECTOR,check_etf): #기업 개요가 나올때까지 기다린다
                 if is_element_present(driver, By.CSS_SELECTOR,elem_overview1):
                     overview=driver.find_element(By.CSS_SELECTOR,elem_overview1).text
@@ -167,14 +171,17 @@ for i in range(0,len(etf)):
         error.append((i,code, name, market,'Timeout'))
         print(str(i)+'에서 오류발생 , '+no.group()+' :')
         print(str(e))
+
+    except NotEtfException as e:
+        error.append((i,code, name, market,'not etf'))
+        print(str(e))
         
     except Exception as e:   #에러목록 수집
         code=traceback.format_exc()
         no=re.search(r'line (\d+)',code)
         error.append((i,code, name, market,'unknown error'))
         print(no.group()+' 에서 에러발생함. 일반 에러출력')
-
-
+        
 with open('etf.csv','a',newline='') as f:
     f.write('i,코드,상품명,거래소,개요,')
     f.write('\r\n')
@@ -196,8 +203,8 @@ with open('etf_missing.csv','a',newline='') as f:
 with open('error.csv','a',newline='') as f:
     f.write('i,코드,상품명,거래소,error')
     f.write('\r\n')
-    for i in no_exist :
+    for i in error :
         line=''
-        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]+','+i[4]
+        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]
         f.write(line)
         f.write('\r\n')
