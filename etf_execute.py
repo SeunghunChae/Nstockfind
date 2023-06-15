@@ -92,7 +92,7 @@ check_etf='#content > div.Overview_article__3sC9o.Overview_articleIndex__2m4YI >
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(2145,2146):
+for i in range(0,len(etf)):
     print(i)    
     idx=etf[i]
     name=''
@@ -167,8 +167,8 @@ for i in range(2145,2146):
         print(e)
 
     except TimeoutException as e:
-        code=traceback.format_exc()
-        no=re.search(r'line (\d+)',code)
+        code_err=traceback.format_exc()
+        no=re.search(r'line (\d+)',code_err)
         error.append((i,code, name, market,'Timeout'))
         print(str(i)+'에서 오류발생 , '+no.group()+' :')
         print(str(e))
@@ -178,8 +178,8 @@ for i in range(2145,2146):
         print(str(e))
         
     except Exception as e:   #에러목록 수집
-        code=traceback.format_exc()
-        no=re.search(r'line (\d+)',code)
+        code_err=traceback.format_exc()
+        no=re.search(r'line (\d+)',code_err)
         error.append((i,code, name, market,'unknown error'))
         print(no.group()+' 에서 에러발생함. 일반 에러출력')
         
