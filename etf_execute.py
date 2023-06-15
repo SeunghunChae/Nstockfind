@@ -206,6 +206,6 @@ with open('error.csv','a',newline='') as f:
     f.write('\r\n')
     for i in error :
         line=''
-        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]
+        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]+','+i[4]
         f.write(line)
         f.write('\r\n')
