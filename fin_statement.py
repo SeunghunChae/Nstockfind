@@ -32,6 +32,21 @@ def is_element_present(driver, by, value):
     except Exception:
         return False
 
+def find_tab_statement(driver):
+    code1='#_main_stock_tab > div > ul > li:nth-child('
+    code2=') > a > span'
+    try :        
+        for i in range(1,6):
+            target=code1+str(i)+code2
+            elements=driver.find_element(By.CSS_SELECTOR,target)
+            if elements.text=='재무':
+                
+                return target
+    except :
+        print('재무항목이 없습니다.')
+        return ''
+    
+
 class FindKoreaException(Exception): ## Exception을 상속받아야한다.
     def __init__(self):
         super().__init__('한국종목이 나왔습니다.') 
@@ -83,7 +98,7 @@ base_day='#content > div.TableFixed_article__1mw8w > div.TableFixed_tableFrame__
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(0,len(company)):
+for i in range(4,5):
     print(i)    
     name=''
     code=''
@@ -137,6 +152,9 @@ for i in range(0,len(company)):
         print(code+' '+name+' '+market)
         ###########################기업 페이지 들어옴###################################
         time.sleep(1)
+        tab_statement=find_tab_statement(driver)    #child를 돌면서 재무인 것을 찾아서 확인하도록 만듦. 지렸다.
+        if tab_statement=='':
+            raise NoStatementException
         if is_element_present(driver, By.CSS_SELECTOR,tab_statement):
             driver.find_element(By.CSS_SELECTOR,tab_statement).click()
             time.sleep(0.3)
@@ -145,10 +163,10 @@ for i in range(0,len(company)):
                 time.sleep(0.3)
                 base=driver.find_element(By.CSS_SELECTOR,base_day).text
                 if base!=company[i][1]:
-                    output.append((i, name, company[i][0], market, company[i][1], base]))
+                    output.append((i, name, company[i][0], market, company[i][1], base))
                     print('날짜가 다릅니다')
                 else:
-                    normal.append((i, name, company[i][0], market, company[i][1], base]))
+                    normal.append((i, name, company[i][0], market, company[i][1], base))
                 time.sleep(0.2)
         else :
             raise NoStatementException
