@@ -82,7 +82,7 @@ base_day='#content > div.TableFixed_article__1mw8w > div.TableFixed_tableFrame__
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(7,8):
+for i in range(0,len(company)):
     print(i)    
     name=''
     code=''
@@ -177,7 +177,7 @@ for i in range(7,8):
         
 
 with open('korea.csv','a',newline='') as f:
-    f.write('i,코드,상품명,거래소)
+    f.write('i,코드,상품명,거래소')
     f.write('\r\n')
     for i in korea :
         line=''
