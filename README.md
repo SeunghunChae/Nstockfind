@@ -1,9 +1,8 @@
-# Nstockfind
-finding m194 stocks in naver having no information on overview
+# Nstockfind - financial statements
+finding missings on financial statements in naver stock pages for USA.
 ==========================================
 ## 0. 진행도
-2023-06-13 : 크롤링 기능 구현 <br>
-2023-06-14 : 초본 작업 완료 <br>
+2023-06-22 : 크롤링 기능 구현 <br>
 
 <br><br>
 
