@@ -40,19 +40,17 @@ class TimeoutException(Exception): ## while이 3초 이상 돌 경우
     def __init__(self,timeout):
         super().__init__(f"while이 {timeout} 초 이상 돌았습니다.")
 
-class NotEtfException(Exception): ## while이 3초 이상 돌 경우
-    def __init__(self,name):
-        super().__init__(f"{name}는 etf가 아닙니다.")
+class NoStatementException(Exception): ## while이 3초 이상 돌 경우
+    def __init__(self):
+        super().__init__(f"재무버튼이 없습니다.")
 
 company=[]
-etf=[]
 error=[]
 output=[]
 korea=[]
 no_exist=[]
 
 file=open('input.dat', 'r')
-idx_etf=open('etf.dat', 'r')
 
 while True :
     line=file.readline()
@@ -60,41 +58,32 @@ while True :
         break
     line=line.lstrip()
     line=line.rstrip()
-    company.append(line)
+    temp=line.split()
+    company.append(temp)
 
+del company[0]
 del company[0]
 file.close()
 
-while True :
-    line=idx_etf.readline()
-    if len(line)==0:
-        break
-    line=line.lstrip()
-    line=line.rstrip()
-    etf.append(int(line))
-idx_etf.close()
-
 k=1
-elem_name1='#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > strong'
-elem_code1='#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9'
-elem_market1='#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_market__ASMay'
-
+#태그를 상수로 정의함
+tag_inputbox='#__next > div.SearchBar_article__XF6AA > div > div > div > div > input.SearchBar_input__t2ws8'
+elem_name1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > strong'
+elem_code1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9'
+elem_market1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_market__ASMay'
 #검색 결과가 하나밖에 없을 경우
-elem_name2='#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li > div.SearchList_link__zBlL1 > strong'
-elem_code12='#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9'
-elem_market2='#__next > div.ViewportFrame_article__KgZKu > div.SearchList_article__v7J3E > ul > li > div.SearchList_link__zBlL1 > span > span.SearchList_market__ASMay'
-
-elem_overview1='#content > div.Overview_article__3sC9o.Overview_articleIndex__2m4YI > div'
-
-check_etf='#content > div.Overview_article__3sC9o.Overview_articleIndex__2m4YI > strong'
-
+elem_name2='#content > div.SearchList_article__v7J3E > ul > li > div.SearchList_link__zBlL1 > strong'
+elem_code2='#content > div.SearchList_article__v7J3E > ul > li > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9'
+elem_market2='#content > div.SearchList_article__v7J3E > ul > li > div.SearchList_link__zBlL1 > span > span.SearchList_market__ASMay'
+tab_statement='#_main_stock_tab > div > ul > li:nth-child(5) > a > span'
+primary_statement='#content > div.RoundTab_article__lsTJ-.RoundTab_article15__vs3LK > ul > li:nth-child(2) > a'
+base_day='#content > div.TableFixed_article__1mw8w > div.TableFixed_tableFrame__1Oq4s.TableFixed_scrollFrame__1gp5j > div > table > thead > tr > th:nth-last-child(1)'
 ##################### 크롤링 시작 #####################
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(0,len(etf)):
+for i in range(3,4):
     print(i)    
-    idx=etf[i]
     name=''
     code=''
     market=''
@@ -103,8 +92,9 @@ for i in range(0,len(etf)):
     try:
         driver.get(url)
         time.sleep(0.5)
-        inputbox=driver.find_element(By.CSS_SELECTOR, '#__next > div.ViewportFrame_article__KgZKu > div.SearchBar_article__XF6AA > div > div > div > input.SearchBar_input__t2ws8')
-        inputbox.send_keys(company[idx])
+        inputbox=driver.find_element(By.CSS_SELECTOR, tag_inputbox)
+        inputbox.send_keys(company[i][0].split('.')[0]) #ric를 떼어냄
+        inputbox.send_keys(Keys.RETURN)
         time.sleep(0.5)
         #이름을 찾는다
         time.sleep(0.5)
@@ -145,61 +135,46 @@ for i in range(0,len(etf)):
 
         print(code+' '+name+' '+market)
         ###########################기업 페이지 들어옴###################################
-        start_time = time.time()
-        while True:
-            elapsed_time = time.time() - start_time
-            if elapsed_time>3:
-                raise NotEtfException(company[idx])
-            if is_element_present(driver, By.CSS_SELECTOR,check_etf): #기업 개요가 나올때까지 기다린다
-                if is_element_present(driver, By.CSS_SELECTOR,elem_overview1):
-                    overview=driver.find_element(By.CSS_SELECTOR,elem_overview1).text
-                    output.append((idx, code, name, market, overview))
-                    break
-                else :
-                    no_exist.append((idx, code, name, market))
-                    break
+        start_time = time.time() 
+        if is_element_present(driver, By.CSS_SELECTOR,tab_statement):
+            driver.find_element(By.CSS_SELECTOR,tab_statement).click()
+            if driver.find_element(By.CSS_SELECTOR,primary_statement).text=='주요재무':
+                driver.find_element(By.CSS_SELECTOR,primary_statement).click()
+                time.sleep(0.5)
+                base=driver.find_element(By.CSS_SELECTOR,base_day).text
+                if base!=company[i][1]:
+                    output.append([i, name, company[i][0], market, company[i][1], base])
+        else :
+            raise NoStatementException
 
         
 
     except FindKoreaException as e:
-        korea.append((idx, code, name,market))
-        print("korea : "+str(idx)+' '+code+' '+name)
+        code=company[i][0]
+        korea.append((i, code, name,market))
+        print("korea : "+str(i)+' '+company[i][0]+' '+name)
         print(e)
 
     except TimeoutException as e:
+        code=company[i][0]
         code_err=traceback.format_exc()
         no=re.search(r'line (\d+)',code_err)
         error.append((i,code, name, market,'Timeout'))
         print(str(i)+'에서 오류발생 , '+no.group()+' :')
         print(str(e))
 
-    except NotEtfException as e:
-        error.append((i,code, name, market,'not etf'))
-        print(str(e))
-        
+    except NoStatementException as e:
+        code=company[i][0]
+        output.append([i,code, name, market,company[i][1],'No_Fin'])
+        print(code+' 는 재무버튼이 없습니다.')
+
     except Exception as e:   #에러목록 수집
+        code=company[i][0]
         code_err=traceback.format_exc()
         no=re.search(r'line (\d+)',code_err)
         error.append((i,code, name, market,'unknown error'))
         print(no.group()+' 에서 에러발생함. 일반 에러출력')
         
-with open('etf.csv','a',newline='') as f:
-    f.write('i,코드,상품명,거래소,개요,')
-    f.write('\r\n')
-    for i in output :
-        line=''
-        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]+','+i[4]
-        f.write(line)
-        f.write('\r\n')
-
-with open('etf_missing.csv','a',newline='') as f:
-    f.write('i,코드,상품명,거래소,')
-    f.write('\r\n')
-    for i in no_exist :
-        line=''
-        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]
-        f.write(line)
-        f.write('\r\n')
 
 with open('error.csv','a',newline='') as f:
     f.write('i,코드,상품명,거래소,error')
@@ -209,3 +184,12 @@ with open('error.csv','a',newline='') as f:
         line=str(i[0])+','+i[1]+','+i[2]+','+i[3]+','+i[4]
         f.write(line)
         f.write('\r\n')
+
+with open('output.csv','a',newline='') as f:
+    f.write('i,이름, 코드, 거래소, koscom_day, naver_day')
+    f.write('\r\n')
+    for i in output :
+        line=''
+        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]+','+i[4]+','+i[5]
+        f.write(line)
+        f.write('\r\n')        
