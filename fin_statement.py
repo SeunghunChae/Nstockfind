@@ -94,11 +94,12 @@ elem_market2='#content > div.SearchList_article__v7J3E > ul > li > div.SearchLis
 tab_statement='#_main_stock_tab > div > ul > li:nth-child(5) > a > span'
 primary_statement='#content > div.RoundTab_article__lsTJ-.RoundTab_article15__vs3LK > ul > li:nth-child(2) > a'
 base_day='#content > div.TableFixed_article__1mw8w > div.TableFixed_tableFrame__1Oq4s.TableFixed_scrollFrame__1gp5j > div > table > thead > tr > th:nth-last-child(1)'
+btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zigz- > ul > li:nth-child(2) > a'
 ##################### 크롤링 시작 #####################
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(4,5):
+for i in range(0,100):
     print(i)    
     name=''
     code=''
@@ -160,7 +161,9 @@ for i in range(4,5):
             time.sleep(0.3)
             if driver.find_element(By.CSS_SELECTOR,primary_statement).text=='주요재무':
                 driver.find_element(By.CSS_SELECTOR,primary_statement).click()
-                time.sleep(0.3)
+                time.sleep(0.2)
+                driver.find_element(By.CSS_SELECTOR,btn_quater).click()
+                time.sleep(0.2)
                 base=driver.find_element(By.CSS_SELECTOR,base_day).text
                 if base!=company[i][1]:
                     output.append((i, name, company[i][0], market, company[i][1], base))
