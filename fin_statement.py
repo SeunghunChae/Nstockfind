@@ -135,12 +135,13 @@ for i in range(0,len(company)):
 
         print(code+' '+name+' '+market)
         ###########################기업 페이지 들어옴###################################
-        start_time = time.time() 
+        time.sleep(1)
         if is_element_present(driver, By.CSS_SELECTOR,tab_statement):
             driver.find_element(By.CSS_SELECTOR,tab_statement).click()
+            time.sleep(0.3)
             if driver.find_element(By.CSS_SELECTOR,primary_statement).text=='주요재무':
                 driver.find_element(By.CSS_SELECTOR,primary_statement).click()
-                time.sleep(0.5)
+                time.sleep(0.3)
                 base=driver.find_element(By.CSS_SELECTOR,base_day).text
                 if base!=company[i][1]:
                     output.append([i, name, company[i][0], market, company[i][1], base])
