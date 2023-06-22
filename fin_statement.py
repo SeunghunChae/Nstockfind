@@ -49,6 +49,7 @@ error=[]
 output=[]
 korea=[]
 no_exist=[]
+normal=[]
 
 file=open('input.dat', 'r')
 
@@ -144,7 +145,11 @@ for i in range(0,len(company)):
                 time.sleep(0.3)
                 base=driver.find_element(By.CSS_SELECTOR,base_day).text
                 if base!=company[i][1]:
-                    output.append([i, name, company[i][0], market, company[i][1], base])
+                    output.append((i, name, company[i][0], market, company[i][1], base]))
+                    print('날짜가 다릅니다')
+                else:
+                    normal.append((i, name, company[i][0], market, company[i][1], base]))
+                time.sleep(0.2)
         else :
             raise NoStatementException
 
@@ -166,7 +171,7 @@ for i in range(0,len(company)):
 
     except NoStatementException as e:
         code=company[i][0]
-        output.append([i,code, name, market,company[i][1],'No_Fin'])
+        output.append((i,code, name, market,company[i][1],'No_Fin'))
         print(code+' 는 재무버튼이 없습니다.')
 
     except Exception as e:   #에러목록 수집
@@ -199,6 +204,15 @@ with open('output.csv','a',newline='') as f:
     f.write('i,이름, 코드, 거래소, koscom_day, naver_day')
     f.write('\r\n')
     for i in output :
+        line=''
+        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]+','+i[4]+','+i[5]
+        f.write(line)
+        f.write('\r\n')        
+
+with open('normal.csv','a',newline='') as f:
+    f.write('i,이름, 코드, 거래소, koscom_day, naver_day')
+    f.write('\r\n')
+    for i in normal :
         line=''
         line=str(i[0])+','+i[1]+','+i[2]+','+i[3]+','+i[4]+','+i[5]
         f.write(line)
