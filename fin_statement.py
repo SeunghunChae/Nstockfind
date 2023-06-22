@@ -82,7 +82,7 @@ base_day='#content > div.TableFixed_article__1mw8w > div.TableFixed_tableFrame__
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(3,4):
+for i in range(7,8):
     print(i)    
     name=''
     code=''
@@ -175,6 +175,15 @@ for i in range(3,4):
         error.append((i,code, name, market,'unknown error'))
         print(no.group()+' 에서 에러발생함. 일반 에러출력')
         
+
+with open('korea.csv','a',newline='') as f:
+    f.write('i,코드,상품명,거래소)
+    f.write('\r\n')
+    for i in korea :
+        line=''
+        line=str(i[0])+','+i[1]+','+i[2]+','+i[3]
+        f.write(line)
+        f.write('\r\n')
 
 with open('error.csv','a',newline='') as f:
     f.write('i,코드,상품명,거래소,error')
