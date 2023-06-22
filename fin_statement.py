@@ -99,7 +99,7 @@ btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zi
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(0,100):
+for i in range(57,58):
     print(i)    
     name=''
     code=''
@@ -165,6 +165,7 @@ for i in range(0,100):
                 driver.find_element(By.CSS_SELECTOR,btn_quater).click()
                 time.sleep(0.2)
                 base=driver.find_element(By.CSS_SELECTOR,base_day).text
+                base=base.replace('.','')
                 if base!=company[i][1]:
                     output.append((i, name, company[i][0], market, company[i][1], base))
                     print('날짜가 다릅니다')
