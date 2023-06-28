@@ -47,11 +47,11 @@ def find_tab_statement(driver):
         return ''
 
 def check_market(ric, market):
-    if ric=='SZ':
-        if market.find('선강퉁'):
+    if ric=='T':
+        if market.find('도쿄'):
             return True
-    elif ric=='SS':
-        if market.find('후강퉁'):
+    elif ric=='L':
+        if market.find('도쿄'):
             return True
     else :
         return False
@@ -75,7 +75,7 @@ korea=[]
 no_exist=[]
 normal=[]
 
-file=open('REFFINSTATEMENTIN_CHN.dat', 'r')
+file=open('REFFINSTATEMENTIN_JPN.dat', 'r')
 
 while True :
     line=file.readline()

@@ -46,9 +46,13 @@ def find_tab_statement(driver):
         print('재무항목이 없습니다.')
         return ''
 
-def check_market(ric, market):#이새긴 너무 많아서 대충 후리자.
-    if market in '선강퉁' or '후강퉁' or '홍콩' or '호치민':
-        return True
+def check_market(ric, market):
+    if ric=='HN': #333개 존재함 => 하노이거래소
+        if market.find('하노이'):
+            return True
+    elif ric=='HM': #1123개 존재함 => 호치민거래소
+        if market.find('호치민'):
+            return True
     else :
         return False
 
@@ -71,7 +75,7 @@ korea=[]
 no_exist=[]
 normal=[]
 
-file=open('REFFINSTATEMENTIN_HKG.dat', 'r')
+file=open('REFFINSTATEMENTIN_VNM.dat', 'r')
 
 while True :
     line=file.readline()
@@ -103,7 +107,7 @@ btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zi
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(2000):
+for i in range(2):
     print(i)    
     name=''
     code=''
