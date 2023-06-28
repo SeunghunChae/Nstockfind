@@ -3,6 +3,7 @@ finding missings on financial statements in naver stock pages for USA.
 ==========================================
 ## 0. 진행도
 2023-06-22 : 크롤링 기능 구현 <br>
+2023-06-28 : chn, jpn, hkg 기능 추가 <br>
 
 <br><br>
 

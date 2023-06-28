@@ -99,7 +99,11 @@ btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zi
 driver = webdriver.Chrome('c:\chromedriver.exe')
 
 url='https://m.stock.naver.com/search'
+<<<<<<< Updated upstream
 for i in range(2000,4000):
+=======
+for i in range(2000):
+>>>>>>> Stashed changes
     print(i)    
     name=''
     code=''
