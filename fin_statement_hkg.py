@@ -45,7 +45,16 @@ def find_tab_statement(driver):
     except :
         print('재무항목이 없습니다.')
         return ''
-    
+
+def check_market(ric, market):
+    if ric=='SZ':
+        if market.find('선강퉁'):
+            return True
+    elif ric=='SS':
+        if market.find('후강퉁'):
+            return True
+    else :
+        return False
 
 class FindKoreaException(Exception): ## Exception을 상속받아야한다.
     def __init__(self):
@@ -66,7 +75,7 @@ korea=[]
 no_exist=[]
 normal=[]
 
-file=open('input.dat', 'r')
+file=open('REFFINSTATEMENTIN_CHN.dat', 'r')
 
 while True :
     line=file.readline()
@@ -77,7 +86,6 @@ while True :
     temp=line.split()
     company.append(temp)
 
-del company[0]
 del company[0]
 file.close()
 
@@ -96,14 +104,10 @@ primary_statement='#content > div.RoundTab_article__lsTJ-.RoundTab_article15__vs
 base_day='#content > div.TableFixed_article__1mw8w > div.TableFixed_tableFrame__1Oq4s.TableFixed_scrollFrame__1gp5j > div > table > thead > tr > th:nth-last-child(1)'
 btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zigz- > ul > li:nth-child(2) > a'
 ##################### 크롤링 시작 #####################
-driver = webdriver.Chrome('c:\chromedriver.exe')
+driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-<<<<<<< Updated upstream
-for i in range(2000,4000):
-=======
-for i in range(2000):
->>>>>>> Stashed changes
+for i in range(2):
     print(i)    
     name=''
     code=''
@@ -115,6 +119,7 @@ for i in range(2000):
         time.sleep(0.5)
         inputbox=driver.find_element(By.CSS_SELECTOR, tag_inputbox)
         inputbox.send_keys(company[i][0].split('.')[0]) #ric를 떼어냄
+        ric=company[i][0].split('.')[1]
         inputbox.send_keys(Keys.RETURN)
         time.sleep(0.5)
         #이름을 찾는다
@@ -137,11 +142,10 @@ for i in range(2000):
                         code=target.text
                         target=driver.find_element(By.CSS_SELECTOR, elem_market1)
                         market=target.text
-                        if code.isdigit(): #한국종목 발견
-                            raise FindKoreaException
-                        code, name = name, code #미국종목은 한국종목과 code, name이 반대이다.
-                        target.click()
-                        break
+                        if check_market(ric, market): #ric에 맞는 거래소 종목을 찾는다.
+                            code, name = name, code #미국종목은 한국종목과 code, name이 반대이다.
+                            target.click()
+                            break
                 k+=1
                 if len(code)!=0:
                     break
