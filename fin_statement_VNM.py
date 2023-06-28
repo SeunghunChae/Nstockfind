@@ -48,10 +48,7 @@ def find_tab_statement(driver):
 
 def check_market(ric, market):
     if ric=='HN': #333개 존재함 => 하노이거래소
-        if '하노이' in market:
-            return True
-    elif ric=='HM': #1123개 존재함 => 호치민거래소
-        if '호치민' in market:
+        if '하노이' in market or '호치민' in market:
             return True
     else :
         return False
