@@ -47,9 +47,9 @@ def find_tab_statement(driver):
         return ''
 
 def check_market(ric, market):
-    if ric=='HN': #333개 존재함 => 하노이거래소
-        if '하노이' in market or '호치민' in market:
-            return True
+    keyword=["하노이","호치민"]
+    if any(i in market for i in keyword):
+        return True
     else :
         return False
 
@@ -104,7 +104,7 @@ btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zi
 driver = webdriver.Chrome('c:\chromedriver.exe')
 
 url='https://m.stock.naver.com/search'
-for i in range(len(company)):
+for i in range(2):
     print(i)    
     name=''
     code=''
