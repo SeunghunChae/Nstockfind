@@ -35,16 +35,17 @@ def is_element_present(driver, by, value):
 def find_tab_statement(driver):
     code1='#_main_stock_tab > div > ul > li:nth-child('
     code2=') > a > span'
-    try :        
-        for i in range(1,6):
+
+    for i in range(1,6):
+        try :
             target=code1+str(i)+code2
-            elements=driver.find_element(By.CSS_SELECTOR,target)
-            if elements.text=='재무':
-                
+            elements=driver.find_element(By.CSS_SELECTOR, target).text
+            if elements=='재무':
                 return target
-    except :
-        print('재무항목이 없습니다.')
-        return ''
+        except :
+            pass    
+    print('재무항목이 없습니다.')
+    return False
 
 def check_market(ric, market):
     if ric=='SZ':
@@ -54,6 +55,16 @@ def check_market(ric, market):
         if market.find('후강퉁')!=-1:
             return True
     return False
+
+def set_elem(k):
+    global elem_name1
+    global elem_code1
+    global elem_market1
+
+    elem_name1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > strong'
+    elem_code1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9'
+    elem_market1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_market__ASMay'
+    return
 
 class FindKoreaException(Exception): ## Exception을 상속받아야한다.
     def __init__(self):
@@ -66,6 +77,7 @@ class TimeoutException(Exception): ## while이 3초 이상 돌 경우
 class NoStatementException(Exception): ## while이 3초 이상 돌 경우
     def __init__(self):
         super().__init__(f"재무버튼이 없습니다.")
+
 
 company=[]
 error=[]
@@ -88,15 +100,7 @@ while True :
 del company[0]
 file.close()
 
-def set_elem(k):
-    global elem_name1
-    global elem_code1
-    global elem_market1
 
-    elem_name1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > strong'
-    elem_code1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9'
-    elem_market1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_market__ASMay'
-    return
     
 k=1
 #태그를 상수로 정의함
@@ -113,9 +117,9 @@ primary_statement='#content > div.RoundTab_article__lsTJ-.RoundTab_article15__vs
 base_day='#content > div.TableFixed_article__1mw8w > div.TableFixed_tableFrame__1Oq4s.TableFixed_scrollFrame__1gp5j > div > table > thead > tr > th:nth-last-child(1)'
 btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zigz- > ul > li:nth-child(2) > a'
 ##################### 크롤링 시작 #####################
+driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(383,384):
 for i in range(2000,len(company)):
     print(i)    
     name=''
