@@ -35,26 +35,32 @@ def is_element_present(driver, by, value):
 def find_tab_statement(driver):
     code1='#_main_stock_tab > div > ul > li:nth-child('
     code2=') > a > span'
-    try :        
-        for i in range(1,6):
+
+    for i in range(1,6):
+        try :
             target=code1+str(i)+code2
-            elements=driver.find_element(By.CSS_SELECTOR,target)
-            if elements.text=='재무':
-                
+            elements=driver.find_element(By.CSS_SELECTOR, target).text
+            if elements=='재무':
                 return target
-    except :
-        print('재무항목이 없습니다.')
-        return ''
+        except :
+            pass    
+    print('재무항목이 없습니다.')
+    return False
 
 def check_market(ric, market):
-    if ric=='T':
-        if market.find('도쿄'):
-            return True
-    elif ric=='L':
-        if market.find('도쿄'):
-            return True
-    else :
-        return False
+    if market.find('도쿄'):
+        return True
+    return False
+
+def set_elem(k):
+    global elem_name1
+    global elem_code1
+    global elem_market1
+
+    elem_name1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > strong'
+    elem_code1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_code__59hG9'
+    elem_market1='#content > div > ul > li:nth-child('+str(k)+') > div.SearchList_link__zBlL1 > span > span.SearchList_market__ASMay'
+    return
 
 class FindKoreaException(Exception): ## Exception을 상속받아야한다.
     def __init__(self):
@@ -68,6 +74,7 @@ class NoStatementException(Exception): ## while이 3초 이상 돌 경우
     def __init__(self):
         super().__init__(f"재무버튼이 없습니다.")
 
+
 company=[]
 error=[]
 output=[]
@@ -75,7 +82,7 @@ korea=[]
 no_exist=[]
 normal=[]
 
-file=open('REFFINSTATEMENTIN_JPN.dat', 'r')
+file=open('REFFINSTATEMENTIN_CHN.dat', 'r')
 
 while True :
     line=file.readline()
@@ -89,6 +96,8 @@ while True :
 del company[0]
 file.close()
 
+
+    
 k=1
 #태그를 상수로 정의함
 tag_inputbox='#__next > div.SearchBar_article__XF6AA > div > div > div > div > input.SearchBar_input__t2ws8'
@@ -107,7 +116,7 @@ btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zi
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(2):
+for i in range(2000,len(company)):
     print(i)    
     name=''
     code=''
@@ -124,39 +133,43 @@ for i in range(2):
         time.sleep(0.5)
         #이름을 찾는다
         time.sleep(0.5)
-        if is_element_present(driver, By.CSS_SELECTOR,elem_name1):
-            target=driver.find_element(By.CSS_SELECTOR, elem_name1)
-            name=target.text
-            start_time = time.time() # 3초 이상 걸리면 탈출
-            while True: #한국종목일경우 코드번호를 통해 미국 종목을 찾는다.
-                elapsed_time = time.time() - start_time
-                if elapsed_time>3:
-                    raise TimeoutException('3')
+        
+        start_time = time.time() # 3초 이상 걸리면 탈출
+        while True: #한국종목일경우 코드번호를 통해 미국 종목을 찾는다.
+            set_elem(k)
+            elapsed_time = time.time() - start_time
+            if elapsed_time>3:
+                raise TimeoutException('3')
+            if is_element_present(driver, By.CSS_SELECTOR,elem_name1):
+                target=driver.find_element(By.CSS_SELECTOR, elem_name1)
+                name=target.text
                 target=driver.find_element(By.CSS_SELECTOR, elem_code1)
                 start_time2 = time.time() # 3초 이상 걸리면 탈출
-                while True: #로딩이 늦어 em이 안읽혔을때 여기가 읽히는 경우가 있다. 이 경우 text를 가져올 수 없어 exception을 뿜는다. 확인 후 진행하는 코드 추가
-                    elapsed_time2 = time.time() - start_time2
-                    if elapsed_time2>3:
-                        raise TimeoutException('3')
-                    if check_text(driver,target):
-                        code=target.text
-                        target=driver.find_element(By.CSS_SELECTOR, elem_market1)
-                        market=target.text
-                        if check_market(ric, market): #ric에 맞는 거래소 종목을 찾는다.
-                            code, name = name, code #미국종목은 한국종목과 code, name이 반대이다.
-                            target.click()
-                            break
+                elapsed_time2 = time.time() - start_time2
+                if elapsed_time2>3:
+                    raise TimeoutException('3')
+                if check_text(driver,target):
+                    code=target.text
+                    target=driver.find_element(By.CSS_SELECTOR, elem_market1)
+                    market=target.text
+                    if check_market(ric, market): #ric에 맞는 거래소 종목을 찾는다.
+                        code, name = name, code #미국종목은 한국종목과 code, name이 반대이다.
+                        target.click()
+                        break
                 k+=1
-                if len(code)!=0:
+            
+            else :
+                target=driver.find_element(By.CSS_SELECTOR,elem_code2)
+                code=target.text
+                target=driver.find_element(By.CSS_SELECTOR,elem_name2)
+                name=target.text
+                target=driver.find_element(By.CSS_SELECTOR,elem_market2)
+                market=target.text
+                if check_market(ric, market): #ric에 맞는 거래소 종목을 찾는다.
+                    code, name = name, code #미국종목은 한국종목과 code, name이 반대이다.
+                    target.click()
                     break
-        else :
-            target=driver.find_element(By.CSS_SELECTOR,elem_code2)
-            code=target.text
-            target=driver.find_element(By.CSS_SELECTOR,elem_name2)
-            name=target.text
-            target=driver.find_element(By.CSS_SELECTOR,elem_market2)
-            market=target.text
-            target.click()
+                target.click()
 
         print(code+' '+name+' '+market)
         ###########################기업 페이지 들어옴###################################
