@@ -113,10 +113,10 @@ primary_statement='#content > div.RoundTab_article__lsTJ-.RoundTab_article15__vs
 base_day='#content > div.TableFixed_article__1mw8w > div.TableFixed_tableFrame__1Oq4s.TableFixed_scrollFrame__1gp5j > div > table > thead > tr > th:nth-last-child(1)'
 btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zigz- > ul > li:nth-child(2) > a'
 ##################### 크롤링 시작 #####################
-driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
 for i in range(383,384):
+for i in range(2000,len(company)):
     print(i)    
     name=''
     code=''
