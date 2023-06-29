@@ -47,11 +47,10 @@ def find_tab_statement(driver):
     print('재무항목이 없습니다.')
     return False
 
-def check_market(ric, market):#이새긴 너무 많아서 대충 후리자.
+def check_market(ric, market):
     if market in '선강퉁' or '후강퉁' or '홍콩' or '호치민':
         return True
-    else :
-        return False
+    return False
 
 def set_elem(k):
     global elem_name1
@@ -97,6 +96,10 @@ while True :
 del company[0]
 file.close()
 
+#홍콩은 lpad를 해줘야함
+for i in company:
+    i[0]='0'+i[0]
+
 
     
 k=1
@@ -117,7 +120,7 @@ btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zi
 driver = webdriver.Chrome('c:\chromedriver.exe')
 
 url='https://m.stock.naver.com/search'
-for i in range(2000,len(company)):
+for i in range(2000,2005):
     print(i)    
     name=''
     code=''
