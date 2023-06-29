@@ -84,7 +84,7 @@ korea=[]
 no_exist=[]
 normal=[]
 
-file=open('REFFINSTATEMENTIN_CHN.dat', 'r')
+file=open('REFFINSTATEMENTIN_VNM.dat', 'r')
 
 while True :
     line=file.readline()
@@ -118,7 +118,7 @@ btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zi
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(2000,len(company)):
+for i in range(0,len(company)):
     print(i)    
     name=''
     code=''
