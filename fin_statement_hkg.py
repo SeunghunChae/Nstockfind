@@ -47,11 +47,11 @@ def find_tab_statement(driver):
     print('재무항목이 없습니다.')
     return False
 
-def check_market(ric, market):#이새긴 너무 많아서 대충 후리자.
-    if market in '선강퉁' or '후강퉁' or '홍콩' or '호치민':
+def check_market(ric, market):
+    keyword=["선강퉁","후강퉁","홍콩","호치민"]
+    if any(i in market for i in keyword):
         return True
-    else :
-        return False
+    return False
 
 def set_elem(k):
     global elem_name1
@@ -97,6 +97,10 @@ while True :
 del company[0]
 file.close()
 
+#홍콩은 lpad를 해줘야함
+for i in company:
+    i[0]='0'+i[0]
+
 
     
 k=1
@@ -114,10 +118,10 @@ primary_statement='#content > div.RoundTab_article__lsTJ-.RoundTab_article15__vs
 base_day='#content > div.TableFixed_article__1mw8w > div.TableFixed_tableFrame__1Oq4s.TableFixed_scrollFrame__1gp5j > div > table > thead > tr > th:nth-last-child(1)'
 btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zigz- > ul > li:nth-child(2) > a'
 ##################### 크롤링 시작 #####################
-driver = webdriver.Chrome('c:\chromedriver.exe')
+driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(2000,len(company)):
+for i in range(0,2000):
     print(i)    
     name=''
     code=''
