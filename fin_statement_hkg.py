@@ -121,7 +121,7 @@ btn_quater='#content > div.TabBox_tabBoxArea__38DE7.TabBox_financeTabBoxArea__Zi
 driver = webdriver.Chrome()
 
 url='https://m.stock.naver.com/search'
-for i in range(0,2000):
+for i in range(2000, len(company)):
     print(i)    
     name=''
     code=''
