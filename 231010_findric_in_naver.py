@@ -85,7 +85,7 @@ elem_market2='#content > div.SearchList_article__v7J3E > ul > li > div.SearchLis
 ##################### 크롤링 시작 #####################
 driver = webdriver.Chrome('c:\chromedriver.exe')
 url='https://m.stock.naver.com/search'
-for i in range(len(company)):
+for i in range(3000,len(company)):
     print(i)
     lineout=[]
     lineout.append(company[i][0])
@@ -102,7 +102,7 @@ for i in range(len(company)):
     time.sleep(1)
     inputbox=driver.find_element(By.CSS_SELECTOR, tag_inputbox)
     inputbox.send_keys(company[i][0]) #ric를 떼어냄
-    time.sleep(0.5)
+    time.sleep(1)
     ##검색 결과가 여러개 나오는 경우
     if is_element_present(driver, By.CSS_SELECTOR,elem_name1):  #첫번째 요소로 확인 후 한 개의 경우로 넘어감
         while True:
